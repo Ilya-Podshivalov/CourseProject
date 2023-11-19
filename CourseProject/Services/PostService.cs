@@ -13,6 +13,11 @@ namespace CourseProject.Services
         }
         public PostModel Create(PostModel model)
         {
+            if (!model.Progress.Equals("Completed"))
+            {
+                Status status = new Status();
+                model.Progress = status.CheckStatus(model.Date);
+            }
             _dataContext.Posts.Add(model);
             _dataContext.SaveChanges();
 

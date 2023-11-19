@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState,useContext } from 'react';
+import DateTimeInput from "./DateTime";
+import { DateContext } from './DateTime';
 
 const URL = '/api/posts';
 
@@ -20,34 +22,36 @@ const Posts = () =>{
         }
         return [];
     }
-
-
-const addPost = async() =>{
+function AddPost(datei) {
 
     const headerFromUser = document.querySelector('#header').value;
     const textFromUser = document.querySelector('#text').value;
+    const dateFromUser = useContext(DateContext);
 
     const newPost = {
         header: headerFromUser,
-        text: textFromUser
+        text: textFromUser,
+        date: datei,
+        progress: "In process"
     };
 
+
     const headers = new Headers();
-    headers.set('Content-Type', 'application/json');
+    headers.set('Content-Type', 'application/json')
     const options = {
         method: 'POST',
         headers: headers,
         body: JSON.stringify(newPost)
     };
-    const result = await fetch(URL, options);
+    const result =  fetch(URL, options);
     if(result.ok){
-        const post = await result.json();
+        const post =  result.json();
         allPosts.push(post);
         setPosts(allPosts.slice());
     }
 }
 
-    const deletePost = async (id) => {
+    const DeletePost = async (id) => {
         const options = {
             method: 'DELETE',
             headers: new Headers()
@@ -57,14 +61,16 @@ const addPost = async() =>{
         setPosts(allPosts.filter(x => x.id != id));
     }
 
-    const updatePost = async(oldPost) =>{
+    const UpdatePost = async(oldPost) =>{
 
         const headerFromUser = document.querySelector('#header').value;
         const textFromUser = document.querySelector('#text').value;
-    
+        const dateFromUser = document.querySelector('#date').value;
+
         const newPost = {
             header: headerFromUser,
-            text: textFromUser
+            text: textFromUser,
+            date: dateFromUser
         };
     
         const headers = new Headers();
@@ -96,10 +102,13 @@ const addPost = async() =>{
                  <div style={{margin: '10px'}}>
                       <textarea id="text"/>
                  </div>
-                 <button onClick = {() => addPost()}>Add post</button>
+                 <div>
+                    <DateTimeInput/>
+                 </div>
+                 <button onClick = {() => AddPost()}>Add post</button>
             </div>
             <div>
-                {allPosts.map(x => <PostItem key = {x.id} post = {x} deleteAction = {deletePost} updateAction={}/>)}
+                {allPosts.map(x => <PostItem key = {x.id} post = {x} deleteAction = {DeletePost}/>)}
                 
             </div>
         </div>
@@ -114,6 +123,7 @@ const PostItem = ({post, deleteAction, updateAction}) => {
         <div>
             <h2>{post.header}</h2>
             <p>{post.text}</p>
+            <p>{post.DateTimeInput}</p>
             <button onClick={() => deleteAction(post.id)}>Delete</button>
         </div>
     )
