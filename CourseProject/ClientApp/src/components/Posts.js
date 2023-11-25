@@ -22,16 +22,17 @@ const Posts = () =>{
         }
         return [];
     }
-function AddPost(datei) {
+
+    const [selectedDate, setSelectedDate] = useState(false);
+function AddPost() {
 
     const headerFromUser = document.querySelector('#header').value;
     const textFromUser = document.querySelector('#text').value;
-    const dateFromUser = useContext(DateContext);
 
     const newPost = {
         header: headerFromUser,
         text: textFromUser,
-        date: datei,
+        date: selectedDate,
         progress: "In process"
     };
 
@@ -50,6 +51,30 @@ function AddPost(datei) {
         setPosts(allPosts.slice());
     }
 }
+
+const DateContext = React.createContext();
+
+const DateTimeInput = () => {
+
+    const handleDateChange = (date) => {
+      setSelectedDate(date);
+    };
+  
+    return (
+    <div>
+      <DateContext.Provider value={selectedDate}>
+      <Datetime
+          value={selectedDate}
+          onChange={handleDateChange}
+          inputProps={{ placeholder: 'Выберите дату и время' }}
+        />   
+       </DateContext.Provider>
+    </div>
+    );
+};
+
+
+export default DateTimeInput;
 
     const DeletePost = async (id) => {
         const options = {
