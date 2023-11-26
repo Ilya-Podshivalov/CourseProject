@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import { useEffect, useState,useContext } from 'react';
-import DateTimeInput from "./DateTime";
-import { DateContext } from './DateTime';
+import { useEffect, useState, useContext } from 'react';
+import Datetime from 'react-datetime';
+import 'react-datetime/css/react-datetime.css';
+import {MyTable} from './MyTable'
 
 const URL = '/api/posts';
 
@@ -22,34 +23,63 @@ const Posts = () =>{
         }
         return [];
     }
-function AddPost(datei) {
+
+    const DateContext = React.createContext();
+
+const DateTimeInput = () => {
+
+    const handleDateChange = (date) => {
+      setSelectedDate(date);
+    };
+  
+    return (
+    <div>
+      <DateContext.Provider value={selectedDate}>
+      <Datetime
+          value={selectedDate}
+          onChange={handleDateChange}
+          inputProps={{ placeholder: 'Выберите дату и время' }}
+        />   
+       </DateContext.Provider>
+    </div>
+    );
+};
+
+
+    const [selectedDate, setSelectedDate] = useState(false);
+const AddPost = async () => {
 
     const headerFromUser = document.querySelector('#header').value;
     const textFromUser = document.querySelector('#text').value;
-    const dateFromUser = useContext(DateContext);
 
     const newPost = {
         header: headerFromUser,
         text: textFromUser,
-        date: datei,
+        date: selectedDate,
         progress: "In process"
     };
 
 
     const headers = new Headers();
     headers.set('Content-Type', 'application/json')
+
     const options = {
         method: 'POST',
         headers: headers,
         body: JSON.stringify(newPost)
     };
-    const result =  fetch(URL, options);
+    const result = await fetch(URL, options);
     if(result.ok){
-        const post =  result.json();
+        const post = await result.json();
         allPosts.push(post);
         setPosts(allPosts.slice());
     }
 }
+
+useEffect(() => {
+    getPosts();
+},[])
+
 
     const DeletePost = async (id) => {
         const options = {
@@ -57,7 +87,6 @@ function AddPost(datei) {
             headers: new Headers()
         }
         await fetch(URL + `/${id}`, options);
-
         setPosts(allPosts.filter(x => x.id != id));
     }
 
@@ -88,11 +117,9 @@ function AddPost(datei) {
         }
     }
 
-    useEffect(() => {
-        getPosts();
-    },[])
 
-    return(
+
+  return(
         <div>
             <div>
                 <p>Creating post</p>
@@ -104,6 +131,9 @@ function AddPost(datei) {
                  </div>
                  <div>
                     <DateTimeInput/>
+                 </div>
+                 <div>
+                    <MyTable/>
                  </div>
                  <button onClick = {() => AddPost()}>Add post</button>
             </div>
@@ -123,7 +153,8 @@ const PostItem = ({post, deleteAction, updateAction}) => {
         <div>
             <h2>{post.header}</h2>
             <p>{post.text}</p>
-            <p>{post.DateTimeInput}</p>
+            <p>{post.date}</p>
+            <p>{post.progress}</p>
             <button onClick={() => deleteAction(post.id)}>Delete</button>
         </div>
     )
