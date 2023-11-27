@@ -13,7 +13,7 @@ namespace CourseProject.Services
         }
         public PostModel Create(PostModel model)
         {
-            if (!model.Progress.Equals("Completed"))
+            if (!model.Progress.Equals("Выполнено"))
             {
                 Status status = new Status();
                 model.Progress = status.CheckStatus(model.Date);

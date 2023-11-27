@@ -16,7 +16,7 @@
             else
             {
                 SetInProcess(true);
-                return "In process";
+                return "InProcess";
             }
         }
 

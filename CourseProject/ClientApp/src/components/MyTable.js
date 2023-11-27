@@ -1,7 +1,8 @@
 import React from 'react';
-import { Table } from 'react-bootstrap';
+import { Table, Button } from 'react-bootstrap';
+import moment from "moment";
 
-const MyTable = ({ objects }) => {
+const MyTable = ({ objects, handleEdit, handleDelete, newPost }) => {
   return (
     <Table striped bordered hover>
       <thead>
@@ -10,15 +11,23 @@ const MyTable = ({ objects }) => {
           <th>Название</th>
           <th>Описание</th>
           <th>Дата</th>
+          <th>Прогресс</th>
         </tr>
       </thead>
       <tbody>
-        {objects.map((obj, index) => (
+      {objects.map((obj, index) => (
           <tr key={obj.id}>
             <td>{index + 1}</td>
-            <td>{obj.name}</td>
-            <td>{obj.description}</td>
-            <td>{obj.date}</td>
+            <td>{obj.header}</td>
+            <td>{obj.text}</td>
+            <td>{moment(moment(obj.date).toLocaleString()).format('DD/MM/YYYY HH:mm')}</td>
+            <td>{obj.progress}</td>
+            <td>
+               <Button variant="danger" onClick={() => handleEdit(obj)}>Изменить</Button>
+            </td>
+            <td>
+               <Button variant="danger" onClick={() => handleDelete(obj.id)}>Удалить</Button>
+            </td>
           </tr>
         ))}
       </tbody>

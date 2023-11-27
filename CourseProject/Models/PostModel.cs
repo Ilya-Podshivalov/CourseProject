@@ -8,6 +8,7 @@
 
         public DateTime Date { get; set; }
 
-        public string Progress { get; set; }
+        public Status Progress { get; set; }
+
     }
 }

@@ -2,7 +2,9 @@ import React, { Component } from 'react';
 import { useEffect, useState, useContext } from 'react';
 import Datetime from 'react-datetime';
 import 'react-datetime/css/react-datetime.css';
-import {MyTable} from './MyTable'
+import MyTable from './MyTable';
+import { Form, Button } from 'react-bootstrap';
+
 
 const URL = '/api/posts';
 
@@ -24,40 +26,67 @@ const Posts = () =>{
         return [];
     }
 
-    const DateContext = React.createContext();
+const DateContext = React.createContext();
 
-const DateTimeInput = () => {
 
-    const handleDateChange = (date) => {
-      setSelectedDate(date);
-    };
-  
+
+const InputForm = () => {
+
+const [headerValue, setHeaderValue] = useState('');
+const [descriptionValue, setDescriptionValue] = useState('');
+const [dateValue, setdateValue] = useState(null);
+
+     const headerInputChange = (e) => {
+         setHeaderValue(e.target.value);
+      }
+
+    const descriptionInputChange = (e) => {
+        setDescriptionValue(e.target.value);
+    }
+
+    const dateInputChange = (e) => {
+        setdateValue(e);
+    }
+    const handleSubmit = (e) => {
+        const post = {
+            header: headerValue,
+            text: descriptionValue,
+            date: dateValue,
+            progress: "In process"
+        };
+       AddPost(post);
+    }
     return (
-    <div>
-      <DateContext.Provider value={selectedDate}>
-      <Datetime
-          value={selectedDate}
-          onChange={handleDateChange}
-          inputProps={{ placeholder: 'Выберите дату и время' }}
-        />   
-       </DateContext.Provider>
-    </div>
+        <div>
+      <Form onSubmit={handleSubmit}>
+        <Form.Group controlId="headeForm">
+          <Form.Label>Название:</Form.Label>
+          <Form.Control type="text" placeholder="Название" value={headerValue} onChange={headerInputChange} />
+        </Form.Group>
+        <Form.Group controlId="descriptiopForm">
+          <Form.Label>Задача:</Form.Label>
+          <Form.Control type="text" placeholder="Задача" value={descriptionValue} onChange={descriptionInputChange} />
+        </Form.Group>
+        <Form.Group controlId="dateForm">
+           <Form.Label>Дата:</Form.Label>
+           <Datetime value={dateValue} onChange={dateInputChange} inputProps={{ id: 'date_input' }} />
+        </Form.Group>
+        <Button variant="primary" type="submit">
+          Создать
+        </Button>
+      </Form>
+      </div>
     );
-};
+  }    
+  
+const AddPost = async (newPost) => {
 
-
-    const [selectedDate, setSelectedDate] = useState(false);
-const AddPost = async () => {
-
-    const headerFromUser = document.querySelector('#header').value;
-    const textFromUser = document.querySelector('#text').value;
-
-    const newPost = {
-        header: headerFromUser,
+  /* const newPost = {
+        header: inputValue,
         text: textFromUser,
         date: selectedDate,
         progress: "In process"
-    };
+    };*/
 
 
     const headers = new Headers();
@@ -92,27 +121,24 @@ useEffect(() => {
 
     const UpdatePost = async(oldPost) =>{
 
-        const headerFromUser = document.querySelector('#header').value;
-        const textFromUser = document.querySelector('#text').value;
-        const dateFromUser = document.querySelector('#date').value;
-
         const newPost = {
-            header: headerFromUser,
-            text: textFromUser,
-            date: dateFromUser
-        };
-    
+            header: oldPost.header,
+            text: oldPost.text,
+            date: oldPost.date,
+            progress: "Выполнено"
+        }
         const headers = new Headers();
         headers.set('Content-Type', 'application/json');
         const options = {
-            method: 'POST',
+            method: 'PATCH',
             headers: headers,
             body: JSON.stringify(newPost)
         };
         const result = await fetch(URL, options);
         if(result.ok){
-            const post = await result.json();
-            allPosts.push(post);
+           
+            const updatedPost = allPosts.findIndex(x => x.id === oldPost.id);
+            allPosts[updatedPost] = newPost;
             setPosts(allPosts.slice());
         }
     }
@@ -122,24 +148,12 @@ useEffect(() => {
   return(
         <div>
             <div>
-                <p>Creating post</p>
-                <div style={{margin: '10px'}}>
-                     <input id="header"/>
-                 </div>
-                 <div style={{margin: '10px'}}>
-                      <textarea id="text"/>
-                 </div>
-                 <div>
-                    <DateTimeInput/>
-                 </div>
-                 <div>
-                    <MyTable/>
-                 </div>
-                 <button onClick = {() => AddPost()}>Add post</button>
+                <h4>
+                <InputForm/>
+                </h4>
             </div>
             <div>
-                {allPosts.map(x => <PostItem key = {x.id} post = {x} deleteAction = {DeletePost}/>)}
-                
+                <MyTable objects={allPosts} handleEdit={UpdatePost} handleDelete={DeletePost}/>
             </div>
         </div>
     )
@@ -147,15 +161,3 @@ useEffect(() => {
 
 export default Posts;
 
-
-const PostItem = ({post, deleteAction, updateAction}) => {
-    return (
-        <div>
-            <h2>{post.header}</h2>
-            <p>{post.text}</p>
-            <p>{post.date}</p>
-            <p>{post.progress}</p>
-            <button onClick={() => deleteAction(post.id)}>Delete</button>
-        </div>
-    )
-}
