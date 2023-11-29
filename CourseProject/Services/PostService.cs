@@ -13,11 +13,9 @@ namespace CourseProject.Services
         }
         public PostModel Create(PostModel model)
         {
-            if (!model.Progress.Equals("Выполнено"))
-            {
-                Status status = new Status();
-                model.Progress = status.CheckStatus(model.Date);
-            }
+            Status status = new Status();
+            status.SetStatus(model.Date);
+            model.Progress = status.GetStatus();
             _dataContext.Posts.Add(model);
             _dataContext.SaveChanges();
 
@@ -27,6 +25,7 @@ namespace CourseProject.Services
 
         public PostModel Update(PostModel model)
         {
+
             _dataContext.Posts.Update(model);
             _dataContext.SaveChanges();
 

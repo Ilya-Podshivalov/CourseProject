@@ -2,27 +2,42 @@
 {
     public class Status
     {
-        public bool completed;
-        public bool inProcess;
-        public bool overdue;
-        public string CheckStatus(DateTime date)
+        public bool Completed { get; set; }
+        public bool InProcess { get; set; }
+        public bool Overdue { get; set; }
+        public string GetStatus()
         {
-            if (completed) return "Completed";
-            else if(date < DateTime.Now)
+            if (Completed) return "Выполнено";
+            else if (InProcess) return "В процессе";
+            else return "Просрочено";
+        }
+        public void SetStatus(DateTime date)
+        {
+            if (!Completed)
             {
-                SetOverdue(true);
-                return "Overdue";
-            }
-            else
-            {
-                SetInProcess(true);
-                return "InProcess";
+                if (date > DateTime.Now) SetInProcess(true);
+                else SetOverdue(true);
             }
         }
 
-        public void SetCompleted(bool value) => completed = value;
-        public void SetInProcess(bool value) => inProcess = value;
-        public void SetOverdue(bool value) => overdue = value;
+
+
+
+
+        public void SetCompleted(bool value)
+        {
+            ReturnStatus();
+            Completed = value;
+
+        }
+        private void SetInProcess(bool value) => InProcess = value;
+        private void SetOverdue(bool value) => Overdue = value;
+
+        private void ReturnStatus()
+        {
+            SetInProcess(false);
+            SetOverdue(false);
+        }
 
     }
 }
