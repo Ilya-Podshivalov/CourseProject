@@ -20,10 +20,6 @@
             }
         }
 
-
-
-
-
         public void SetCompleted(bool value)
         {
             ReturnStatus();

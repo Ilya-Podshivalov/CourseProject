@@ -23,7 +23,7 @@ const MyTable = ({ objects, handleEdit, handleDelete, newPost }) => {
             <td>{moment(moment(obj.date).toLocaleString()).format('DD/MM/YYYY HH:mm')}</td>
             <td>{obj.progress}</td>
             <td>
-               <Button variant="danger" onClick={() => handleEdit(obj)}>Изменить</Button>
+               <Button variant="success" onClick={() => handleEdit(obj)}>Выполнено</Button>
             </td>
             <td>
                <Button variant="danger" onClick={() => handleDelete(obj.id)}>Удалить</Button>

@@ -80,15 +80,6 @@ const [dateValue, setdateValue] = useState(null);
   }    
   
 const AddPost = async (newPost) => {
-
-  /* const newPost = {
-        header: inputValue,
-        text: textFromUser,
-        date: selectedDate,
-        progress: "In process"
-    };*/
-
-
     const headers = new Headers();
     headers.set('Content-Type', 'application/json')
 
@@ -119,14 +110,17 @@ useEffect(() => {
         setPosts(allPosts.filter(x => x.id != id));
     }
 
-    const UpdatePost = async(oldPost) =>{
+    const CompletePost = async(oldPost) =>{
 
+        console.log(oldPost.id);
         const newPost = {
+            id: oldPost.id,
             header: oldPost.header,
             text: oldPost.text,
             date: oldPost.date,
             progress: "Выполнено"
         }
+
         const headers = new Headers();
         headers.set('Content-Type', 'application/json');
         const options = {
@@ -136,9 +130,9 @@ useEffect(() => {
         };
         const result = await fetch(URL, options);
         if(result.ok){
-           
+            const post = await result.json();
             const updatedPost = allPosts.findIndex(x => x.id === oldPost.id);
-            allPosts[updatedPost] = newPost;
+            allPosts[updatedPost] = post;
             setPosts(allPosts.slice());
         }
     }
@@ -153,7 +147,7 @@ useEffect(() => {
                 </h4>
             </div>
             <div>
-                <MyTable objects={allPosts} handleEdit={UpdatePost} handleDelete={DeletePost}/>
+                <MyTable objects={allPosts} handleEdit={CompletePost} handleDelete={DeletePost}/>
             </div>
         </div>
     )

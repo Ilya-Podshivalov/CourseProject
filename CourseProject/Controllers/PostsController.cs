@@ -20,16 +20,19 @@ namespace CourseProject.Controllers
         {
             return _postService.Create(model);
         }
+
         [HttpPatch]
         public PostModel Update(PostModel model)
         {
             return _postService.Update(model);
         }
+
         [HttpGet("{id}")]
         public PostModel Get(int id)
         {
             return _postService.Get(id);
         }
+
         [HttpGet]
         public IEnumerable<PostModel> GetAll()
         {

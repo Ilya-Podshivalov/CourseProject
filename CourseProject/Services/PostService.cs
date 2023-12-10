@@ -16,6 +16,7 @@ namespace CourseProject.Services
             Status status = new Status();
             status.SetStatus(model.Date);
             model.Progress = status.GetStatus();
+
             _dataContext.Posts.Add(model);
             _dataContext.SaveChanges();
 
@@ -28,7 +29,6 @@ namespace CourseProject.Services
 
             _dataContext.Posts.Update(model);
             _dataContext.SaveChanges();
-
             return model;
         }
 
